@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movie Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Welcome to the Dashboard</h1>
+  <div>
+    <input type="text" id="searchBar" placeholder="Search for movies..." />
+    <button id="searchButton">Search</button>
+  </div>
+  <div id="movieResults">
+    <!-- Movie results will be displayed here -->
+  </div>
+  <script>
+    const apiKey = 'f183b728'; // Updated with the provided API key
+    const searchButton = document.getElementById('searchButton');
+    const searchBar = document.getElementById('searchBar');
+    const movieResults = document.getElementById('movieResults');
+
+    searchButton.addEventListener('click', () => {
+      const query = searchBar.value;  
+      if (query) {
+        fetch(`https://www.omdbapi.com/?apikey=${apiKey}&s=${query}`)
+          .then(response => response.json())
+          .then(data => {
+            movieResults.innerHTML = '';
+            if (data.Search) {
+              data.Search.forEach(movie => {
+                const movieDiv = document.createElement('div');
+                movieDiv.innerHTML = `
+                  <h3>${movie.Title}</h3>
+                  <p>Year: ${movie.Year}</p>
+                  <img src="${movie.Poster}" alt="${movie.Title}" />
+                `;
+                movieResults.appendChild(movieDiv);
+              });
+            } else {
+              movieResults.innerHTML = '<p>No results found. Please try a different search term.</p>';
+            }
+          })
+          .catch(error => { 
+
+            console.error('Error fetching data:', error);
+            movieResults.innerHTML = '<p>Error fetching data. Please try again later.</p>';
+          });
+      }
+    });
+  </script>
+</body>
+</html>
